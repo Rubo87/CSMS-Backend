@@ -1,16 +1,18 @@
 const express = require('express');
 const app = express();
 const port = 3000; // Port number can be changed
-const pool = require('./client');
+const usersRouter = require('./routes/users_routes'); // Correct import for users router
 
 // Middleware for handling JSON data
 app.use(express.json());
 
 // Enable CORS
-app.use(require('cors')());
+/* app.use(require('cors')()); */
+app.get('/', (req, res) => {
+    res.send('Homepage')
+});
 
 // Routes
-const usersRouter = require('./routes/users_routes'); // Correct import for users router
 app.use('/users', usersRouter); // Mount usersRouter at '/users' base path
 
 // Start server

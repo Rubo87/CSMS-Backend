@@ -7,7 +7,7 @@ const { authenticateToken } = require('../middleware/authorization.js');
 
 const router = express.Router();
 
-router.get('/',  authenticateToken, (req, res) => {
+router.get('/',  (req, res) => {
     getData(req, res, getUsersQuery);
 });
 

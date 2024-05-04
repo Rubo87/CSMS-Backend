@@ -7,4 +7,6 @@ const getData = (req, res, dataQuery) => {
     });
 };
 
-exports.getData = getData;
+module.exports = {
+    getData: getData
+};
