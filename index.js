@@ -1,23 +1,28 @@
 const express = require('express');
 const app = express();
-const port = 3000; // Port number can be changed
-const usersRouter = require('./routes/users_routes'); // Correct import for users router
+const pool = require('./client.js');
+const port = 3000;
+const usersRouter = require('./routes/users_routes');
 
-// Middleware for handling JSON data
 app.use(express.json());
 
-// Enable CORS
-/* app.use(require('cors')()); */
 app.get('/', (req, res) => {
-    res.send('Homepage')
+    res.send('Homepage');
 });
 
-// Routes
 app.use('/users', usersRouter); // Mount usersRouter at '/users' base path
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.get('/api/language-schools', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM language_schools');
+        const data = result.rows;
+        res.json(data);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});

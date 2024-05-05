@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { pool } = require('../client.js');
+const pool = require('../client.js');
 const { getData } = require('../shared/controllers.js');
 const { getUsersQuery } = require('../shared/queries.js');
 const { authenticateToken } = require('../middleware/authorization.js');

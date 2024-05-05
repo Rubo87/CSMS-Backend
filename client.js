@@ -9,12 +9,13 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-pool.query('SELECT NOW()', (err, res) => {
+pool.connect((err, client, release) => {
   if (err) {
-    console.error('Error connecting to the database:', err);
-  } else {
-    console.log('Connected to PostgreSQL database successfully');
+    return console.error('Error connecting to the database:', err);
   }
+  console.log('Connected to PostgreSQL database successfully');
 });
 
-module.exports = pool;
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+};
