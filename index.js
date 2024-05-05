@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const pool = require('./client.js');
-const port = 3000;
+const port = process.env.PORT;
 const usersRouter = require('./routes/users_routes');
 
 app.use(express.json());
