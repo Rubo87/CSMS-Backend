@@ -3,6 +3,10 @@ const app = express();
 const pool = require('./client.js');
 const port = process.env.PORT;
 const usersRouter = require('./routes/users_routes');
+const cors = require('cors');
+
+// Enable CORS for all origins
+app.use(cors());
 
 app.use(express.json());
 
