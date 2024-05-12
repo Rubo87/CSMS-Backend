@@ -11,6 +11,8 @@ app.use(cors());
 
 app.use(express.json());
 
+app.use('/api', router);
+
 app.get('/', (req, res) => {
     res.send('Homepage');
 });
@@ -53,7 +55,7 @@ app.put('/api/language-schools/:id', async (req, res) => {
     try {
         const { classValue, companyName, users, firstName, lastName, city, country } = updatedData;
         const result = await pool.query(
-            'UPDATE language_schools SET "class" = $1, companyName = $2, users = $3, firstName = $4, lastName = $5, city = $6, country = $7 WHERE id = $8',
+            'UPDATE language_schools SET "class" = $1, companyname = $2, users = $3, firstname = $4, lastname = $5, city = $6, country = $7 WHERE id = $8',
             [classValue, companyName, users, firstName, lastName, city, country, id]
         );
         if (result.rowCount === 1) {
