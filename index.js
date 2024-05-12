@@ -12,7 +12,7 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use('/api', router);
+app.use('/api', schoolsRouter);
 
 app.get('/', (req, res) => {
     res.send('Homepage');
@@ -36,8 +36,6 @@ app.get('/api/language-schools', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-app.use('/language-schools', schoolsRouter);
 
 app.delete('/api/language-schools/:id', async (req, res) => {
     const id = req.params.id;
