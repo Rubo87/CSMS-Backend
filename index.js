@@ -45,7 +45,7 @@ app.post('/api/language-schools', async (req, res) => {
         // Insert data into the database
         const newEntry = await pool.query(
             'INSERT INTO language_schools (class, companyname, users, firstname, lastname, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [classValue, companyName, users, firstName, lastName, city, country, id]
+            [classValue, companyName, users, firstName, lastName, city, country]
         );
 
         // Send success response with the newly created entry
