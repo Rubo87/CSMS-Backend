@@ -1,10 +1,10 @@
-// Import required modules
+/* // Import required modules
 const express = require('express');
 const router = express.Router();
 const { pool } = require('../client.js'); // Import your PostgreSQL client
 
 // Route to handle POST requests to create a new entry
-router.post('/language-schools', async (req, res) => {
+app.post('/language-schools', async (req, res) => {
     try {
         // Extract data from the request body
         const { classValue, companyName, users, firstName, lastName, city, country } = req.body;
@@ -32,3 +32,4 @@ router.post('/language-schools', async (req, res) => {
 });
 
 module.exports = router;
+ */
