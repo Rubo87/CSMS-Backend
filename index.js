@@ -5,6 +5,7 @@ const port = process.env.PORT;
 const usersRouter = require('./routes/users_routes');
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/authorization.js');
+const router = require('./routes');
 
 // Enable CORS for all origins
 app.use(cors());
