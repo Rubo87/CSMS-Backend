@@ -53,7 +53,7 @@ app.put('/api/language-schools/:id', async (req, res) => {
     try {
         const { classValue, companyName, users, firstName, lastName, city, country } = updatedData;
         const result = await pool.query(
-            'UPDATE language_schools SET classValue = $1, companyName = $2, users = $3, firstName = $4, lastName = $5, city = $6, country = $7 WHERE id = $8',
+            'UPDATE language_schools SET "class" = $1, companyName = $2, users = $3, firstName = $4, lastName = $5, city = $6, country = $7 WHERE id = $8',
             [classValue, companyName, users, firstName, lastName, city, country, id]
         );
         if (result.rowCount === 1) {
