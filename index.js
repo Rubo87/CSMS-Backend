@@ -3,6 +3,7 @@ const app = express();
 const pool = require('./client.js');
 const port = process.env.PORT;
 const usersRouter = require('./routes/users_routes');
+const schoolsRouter = require('./routes/schools_routes');
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/authorization.js');
 
@@ -36,32 +37,7 @@ app.get('/api/language-schools', async (req, res) => {
     }
 });
 
-app.post('/language-schools', async (req, res) => {
-    try {
-        // Extract data from the request body
-        const { classValue, companyName, users, firstName, lastName, city, country } = req.body;
-
-        // Insert data into the database
-        const newEntry = await pool.query(
-            'INSERT INTO language_schools (class, companyname, users, firstname, lastname, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [classValue, companyName, users, firstName, lastName, city, country, id]
-        );
-
-        // Send success response with the newly created entry
-        res.status(201).json({
-            success: true,
-            message: 'New entry created successfully',
-            entry: newEntry.rows[0]
-        });
-    } catch (error) {
-        // Handle errors
-        console.error('Error creating new entry:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal Server Error'
-        });
-    }
-});
+app.use('/language-schools', schoolsRouter);
 
 app.delete('/api/language-schools/:id', async (req, res) => {
     const id = req.params.id;
