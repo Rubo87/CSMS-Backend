@@ -7,24 +7,22 @@ const usersRouter = require('./routes/users_routes');
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/authorization.js');
 
-// Enable CORS for all origins
+
 app.use(cors());
 
 app.use(express.json());
 
-/* app.use('/api/language-schools', schoolsRouter); */
 
 app.get('/', (req, res) => {
     res.send('Homepage');
 });
 
 app.get('/secure-route', authenticateToken, (req, res) => {
-    // This route is protected by authentication middleware
-    // Only authenticated users can access it
+
     res.send('Welcome to the secure route');
 });
 
-app.use('/users', usersRouter); // Mount usersRouter at '/users' base path
+app.use('/users', usersRouter); 
 
 app.get('/api/language-schools', async (req, res) => {
     try {
@@ -39,23 +37,23 @@ app.get('/api/language-schools', async (req, res) => {
 
 app.post('/api/language-schools', async (req, res) => {
     try {
-        // Extract data from the request body
+
         const { classValue, companyName, users, firstName, lastName, city, country } = req.body;
 
-        // Insert data into the database
+
         const newEntry = await pool.query(
             'INSERT INTO language_schools (class, companyname, users, firstname, lastname, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
             [classValue, companyName, users, firstName, lastName, city, country]
         );
 
-        // Send success response with the newly created entry
+
         res.status(201).json({
             success: true,
             message: 'New entry created successfully',
             entry: newEntry.rows[0]
         });
     } catch (error) {
-        // Handle errors
+
         console.error('Error creating new entry:', error);
         res.status(500).json({
             success: false,
@@ -67,10 +65,9 @@ app.post('/api/language-schools', async (req, res) => {
 app.delete('/api/language-schools/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        // Perform deletion operation here using the id
-        // For example, you can execute a DELETE query in your database
+
         await pool.query('DELETE FROM language_schools WHERE id = $1', [id]);
-        res.status(204).send(); // No content, successful deletion
+        res.status(204).send(); 
     } catch (err) {
         console.error('Error executing delete query', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -121,10 +118,10 @@ app.get('/api/calendar-events', async (req, res) => {
 
 app.post('/api/calendar-events', async (req, res) => {
     try {
-        // Extract data from the request body
+
         const { title, date, time, eventType } = req.body;
 
-        // Map eventType to an integer value
+
         let event_type_id;
         switch (eventType) {
             case "High":
@@ -137,26 +134,26 @@ app.post('/api/calendar-events', async (req, res) => {
                 event_type_id = 3;
                 break;
             default:
-                event_type_id = null; // Or handle default case accordingly
+                event_type_id = null; 
         }
 
-        // Parse the date string into a JavaScript Date object
+
         const event_date = new Date(date);
 
-        // Insert data into the events table
+
         const newEntry = await pool.query(
             'INSERT INTO events (title, event_date, event_time, event_type_id) VALUES ($1, $2, $3, $4) RETURNING *',
             [title, event_date, time, event_type_id]
         );
 
-        // Send success response with the newly created entry
+
         res.status(201).json({
             success: true,
             message: 'New event created successfully',
             event: newEntry.rows[0]
         });
     } catch (error) {
-        // Handle errors
+
         console.error('Error creating new event:', error);
         res.status(500).json({
             success: false,
