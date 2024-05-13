@@ -97,6 +97,17 @@ app.put('/api/language-schools/:id', async (req, res) => {
     }
 });
 
+app.get('/api/calendar-events', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM events');
+        const data = result.rows;
+        res.json(data);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
