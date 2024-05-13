@@ -111,12 +111,15 @@ app.get('/api/calendar-events', async (req, res) => {
 app.post('/api/calendar-events', async (req, res) => {
     try {
         // Extract data from the request body
-        const { title, event_date, event_time, event_type_id } = req.body;
+        const { title, date, time, eventType } = req.body;
+
+        // Parse the date string into a JavaScript Date object
+        const event_date = new Date(date);
 
         // Insert data into the events table
         const newEntry = await pool.query(
             'INSERT INTO events (title, event_date, event_time, event_type_id) VALUES ($1, $2, $3, $4) RETURNING *',
-            [title, event_date, event_time, event_type_id]
+            [title, event_date, time, eventType]
         );
 
         // Send success response with the newly created entry
@@ -134,6 +137,7 @@ app.post('/api/calendar-events', async (req, res) => {
         });
     }
 });
+
 
 
 
