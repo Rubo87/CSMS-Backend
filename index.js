@@ -108,6 +108,33 @@ app.get('/api/calendar-events', async (req, res) => {
     }
 });
 
+app.post('/api/calendar-events', async (req, res) => {
+    try {
+        // Extract data from the request body
+        const { title, event_date, event_time, event_type_id } = req.body;
+
+        // Insert data into the events table
+        const newEntry = await pool.query(
+            'INSERT INTO events (title, event_date, event_time, event_type_id) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, event_date, event_time, event_type_id]
+        );
+
+        // Send success response with the newly created entry
+        res.status(201).json({
+            success: true,
+            message: 'New event created successfully',
+            event: newEntry.rows[0]
+        });
+    } catch (error) {
+        // Handle errors
+        console.error('Error creating new event:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
