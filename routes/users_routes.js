@@ -14,14 +14,15 @@ router.get('/',  (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3) RETURNING *', [req.body.username, req.body.email, hashedPassword, req.body.name, req.body.surname, req.body.role]);
+        const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [req.body.username, req.body.email, hashedPassword, req.body.name, req.body.surname, req.body.role]);
 
         res.json({
-            users: newUser.rows[0]
-        })
+            user: newUser.rows[0]
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 module.exports = router;
