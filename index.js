@@ -78,21 +78,22 @@ app.put('/api/language-schools/:id', async (req, res) => {
     const id = req.params.id;
     const updatedData = req.body;
     try {
-        const { classValue, companyName, users, firstName, lastName, city, country } = updatedData;
-        const result = await pool.query(
-            'UPDATE language_schools SET "class" = $1, companyname = $2, users = $3, firstname = $4, lastname = $5, city = $6, country = $7 WHERE id = $8',
-            [classValue, companyName, users, firstName, lastName, city, country, id]
-        );
-        if (result.rowCount === 1) {
-            res.status(200).json({ message: 'Data updated successfully' });
-        } else {
-            res.status(404).json({ error: 'Data not found' });
-        }
+      const { classValue, companyName, users, firstName, lastName, city, country } = updatedData;
+      const result = await pool.query(
+        'UPDATE language_schools SET "class" = $1, companyname = $2, users = $3, firstname = $4, lastname = $5, city = $6, country = $7 WHERE id = $8 RETURNING *',
+        [classValue, companyName, users, firstName, lastName, city, country, id]
+      );
+      if (result.rowCount === 1) {
+        res.status(200).json(result.rows[0]); // Send back the updated row data
+      } else {
+        res.status(404).json({ error: 'Data not found' });
+      }
     } catch (err) {
-        console.error('Error updating data:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error updating data:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+  });
+  
 
 app.get('/api/event-types', async (req, res) => {
     try {
