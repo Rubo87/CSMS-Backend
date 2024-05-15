@@ -148,7 +148,7 @@ app.post('/api/calendar-events', async (req, res) => {
     }
 });
 
-app.post('/users', async (req, res) => {
+app.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [req.body.username, req.body.email, hashedPassword, req.body.name, req.body.surname, req.body.role]);
