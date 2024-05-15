@@ -118,34 +118,18 @@ app.get('/api/calendar-events', async (req, res) => {
 
 app.post('/api/calendar-events', async (req, res) => {
     try {
+        const { title, event_date, event_time, event_type } = req.body;
 
-        const { title, date, time, eventType } = req.body;
-
-
-        let event_type_id;
-        switch (eventType) {
-            case "High":
-                event_type_id = 1;
-                break;
-            case "Medium":
-                event_type_id = 2;
-                break;
-            case "Low":
-                event_type_id = 3;
-                break;
-            default:
-                event_type_id = null; 
+        // Ensure event_type is one of 'high', 'medium', or 'low'
+        if (!['high', 'medium', 'low'].includes(event_type)) {
+            return res.status(400).json({ error: 'Invalid event type' });
         }
 
-
-        const event_date = new Date(date);
-
-
+        // Insert the new event
         const newEntry = await pool.query(
-            'INSERT INTO events (title, event_date, event_time, event_type_id) VALUES ($1, $2, $3, $4) RETURNING *',
-            [title, event_date, time, event_type_id]
+            'INSERT INTO events (title, event_date, event_time, event_type) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, event_date, event_time, event_type]
         );
-
 
         res.status(201).json({
             success: true,
@@ -153,7 +137,6 @@ app.post('/api/calendar-events', async (req, res) => {
             event: newEntry.rows[0]
         });
     } catch (error) {
-
         console.error('Error creating new event:', error);
         res.status(500).json({
             success: false,
