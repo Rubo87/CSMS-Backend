@@ -120,7 +120,9 @@ app.post('/api/calendar-events', async (req, res) => {
     try {
         const { title, event_date, event_time, event_type } = req.body;
 
-        // Ensure event_type is one of 'high', 'medium', or 'low'
+        console.log('Received event data:', req.body);  // Add this line for debugging
+
+        // Validate the event type
         if (!['high', 'medium', 'low'].includes(event_type)) {
             return res.status(400).json({ error: 'Invalid event type' });
         }
@@ -144,6 +146,7 @@ app.post('/api/calendar-events', async (req, res) => {
         });
     }
 });
+
 
 
 
