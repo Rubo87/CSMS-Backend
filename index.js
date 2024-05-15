@@ -22,7 +22,7 @@ app.get('/secure-route', authenticateToken, (req, res) => {
     res.send('Welcome to the secure route');
 });
 
-app.use('/users', usersRouter); 
+app.use('/users', authenticateToken, usersRouter);
 
 app.get('/api/language-schools', async (req, res) => {
     try {
