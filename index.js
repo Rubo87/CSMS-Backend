@@ -148,6 +148,23 @@ app.post('/api/calendar-events', async (req, res) => {
     }
 });
 
+app.post('/users/new', async (req, res) => {
+    try {
+        const { username, email, password, name, surname, role } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const newUser = await pool.query(
+            'INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [username, email, hashedPassword, name, surname, role]
+        );
+
+        res.json({
+            user: newUser.rows[0]
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

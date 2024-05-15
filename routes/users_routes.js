@@ -13,31 +13,26 @@ router.get('/',  (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { email, password, username, name, surname, role } = req.body;
+        const { email, password } = req.body;
 
-        // Check if the request contains the "email" field to determine if it's a login or signup request
-        if (email && password) {
-            // This is a login request
-            const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        // Query the database to find the user by their email
+        const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
 
-            if (user.rows.length === 0) {
-                return res.status(401).json({ error: 'Invalid email or password' });
-            }
-
-            const match = await bcrypt.compare(password, user.rows[0].password);
-
-            if (!match) {
-                return res.status(401).json({ error: 'Invalid email or password' });
-            }
-
-            return res.json({ user: user.rows[0] });
-        } else {
-            // This is a signup request
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [username, email, hashedPassword, name, surname, role]);
-
-            return res.json({ user: newUser.rows[0] });
+        // If no user is found with the provided email, return an error
+        if (user.rows.length === 0) {
+            return res.status(401).json({ error: 'Invalid email or password' });
         }
+
+        // Compare the provided password with the hashed password stored in the database
+        const match = await bcrypt.compare(password, user.rows[0].password);
+
+        // If the passwords don't match, return an error
+        if (!match) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        // If the passwords match, return the user data
+        res.json({ user: user.rows[0] });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
