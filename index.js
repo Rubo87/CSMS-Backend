@@ -6,7 +6,7 @@ const usersRouter = require('./routes/users_routes');
 /* const schoolsRouter = require('./routes/schools_routes'); */
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/authorization.js');
-
+const bcrypt = require('bcrypt');
 
 app.use(cors());
 
