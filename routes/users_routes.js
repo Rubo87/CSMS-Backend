@@ -13,19 +13,6 @@ router.get('/',  (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3) RETURNING *', [req.body.username, req.body.email, hashedPassword, req.body.name, req.body.surname, req.body]);
-
-        res.json({
-            users: newUser.rows[0]
-        })
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.post('/', async (req, res) => {
-    try {
         const { email, password, username, name, surname, role } = req.body;
 
         // Check if the request contains the "email" field to determine if it's a login or signup request
@@ -47,7 +34,7 @@ router.post('/', async (req, res) => {
         } else {
             // This is a signup request
             const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3) RETURNING *', [req.body.username, req.body.email, hashedPassword, req.body.name, req.body.surname, req.body]);
+            const newUser = await pool.query('INSERT INTO users (username, email, password, name, surname, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [username, email, hashedPassword, name, surname, role]);
 
             return res.json({ user: newUser.rows[0] });
         }
@@ -55,5 +42,6 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 module.exports = router;
