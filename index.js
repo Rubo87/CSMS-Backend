@@ -106,47 +106,19 @@ app.get('/api/event-types', async (req, res) => {
     }
 });
 
-app.get('/api/calendar-events', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM events');
-        const data = result.rows;
-        res.json(data);
-    } catch (err) {
-        console.error('Error executing query', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+let events = [];
+
+// POST endpoint for adding events
+app.post('/api/calendar-events', (req, res) => {
+  const eventData = req.body;
+  events.push(eventData); // Add event to the events array
+  res.status(201).json({ message: 'Event added successfully' });
 });
 
-app.post('/api/calendar-events', async (req, res) => {
-    try {
-      const { title, event_date, event_time, event_type } = req.body;
-  
-      console.log('Received event data:', req.body);
-  
-      // Validate the event type
-      if (!['high', 'medium', 'low'].includes(event_type.toLowerCase())) {
-        return res.status(400).json({ error: 'Invalid event type' });
-      }
-  
-      // Insert the new event
-      const newEntry = await pool.query(
-        'INSERT INTO events (title, event_date, event_time, event_type) VALUES ($1, $2, $3, $4) RETURNING *',
-        [title, event_date, event_time, event_type.toLowerCase()]
-      );
-  
-      res.status(201).json({
-        success: true,
-        message: 'New event created successfully',
-        event: newEntry.rows[0]
-      });
-    } catch (error) {
-      console.error('Error creating new event:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal Server Error'
-      });
-    }
-  });
+// GET endpoint for fetching events
+app.get('/api/calendar-events', (req, res) => {
+  res.json({ events });
+});
   
 
 app.post('/users/new', async (req, res) => {
