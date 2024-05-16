@@ -119,34 +119,35 @@ app.get('/api/calendar-events', async (req, res) => {
 
 app.post('/api/calendar-events', async (req, res) => {
     try {
-        const { title, date, time, eventType } = req.body;
-
-        console.log('Received event data:', req.body);
-
-        // Validate the event type
-        if (!['high', 'medium', 'low'].includes(eventType.toLowerCase())) {
-            return res.status(400).json({ error: 'Invalid event type' });
-        }
-
-        // Insert the new event
-        const newEntry = await pool.query(
-            'INSERT INTO events (title, event_date, event_time, event_type) VALUES ($1, $2, $3, $4) RETURNING *',
-            [title, date, time, eventType.toLowerCase()]
-        );
-
-        res.status(201).json({
-            success: true,
-            message: 'New event created successfully',
-            event: newEntry.rows[0]
-        });
+      const { title, event_date, event_time, event_type } = req.body;
+  
+      console.log('Received event data:', req.body);
+  
+      // Validate the event type
+      if (!['high', 'medium', 'low'].includes(event_type.toLowerCase())) {
+        return res.status(400).json({ error: 'Invalid event type' });
+      }
+  
+      // Insert the new event
+      const newEntry = await pool.query(
+        'INSERT INTO events (title, event_date, event_time, event_type) VALUES ($1, $2, $3, $4) RETURNING *',
+        [title, event_date, event_time, event_type.toLowerCase()]
+      );
+  
+      res.status(201).json({
+        success: true,
+        message: 'New event created successfully',
+        event: newEntry.rows[0]
+      });
     } catch (error) {
-        console.error('Error creating new event:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal Server Error'
-        });
+      console.error('Error creating new event:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal Server Error'
+      });
     }
-});
+  });
+  
 
 app.post('/users/new', async (req, res) => {
     try {
