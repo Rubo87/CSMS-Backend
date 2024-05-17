@@ -95,9 +95,9 @@ app.put('/api/language-schools/:id', async (req, res) => {
   });
   
 
-app.get('/api/event-types', async (req, res) => {
+  app.get('/api/calendar-events', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM EventTypes');
+        const result = await pool.query('SELECT * FROM calendar_events');
         const data = result.rows;
         res.json(data);
     } catch (err) {
@@ -106,47 +106,50 @@ app.get('/api/event-types', async (req, res) => {
     }
 });
 
-app.get('/api/calendar-events', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM events');
-        const data = result.rows;
-        res.json(data);
-    } catch (err) {
-        console.error('Error executing query', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
+// Add a new event
 app.post('/api/calendar-events', async (req, res) => {
     try {
-      const { title, event_date, event_time, event_type } = req.body;
-  
-      console.log('Received event data:', req.body);
-  
-      // Validate the event type
-      if (!['high', 'medium', 'low'].includes(event_type.toLowerCase())) {
-        return res.status(400).json({ error: 'Invalid event type' });
-      }
-  
-      // Insert the new event
-      const newEntry = await pool.query(
-        'INSERT INTO events (title, event_date, event_time, event_type) VALUES ($1, $2, $3, $4) RETURNING *',
-        [title, event_date, event_time, event_type.toLowerCase()]
-      );
-  
-      res.status(201).json({
-        success: true,
-        message: 'New event created successfully',
-        event: newEntry.rows[0]
-      });
-    } catch (error) {
-      console.error('Error creating new event:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal Server Error'
-      });
+        const { title, event_date, event_time, event_type } = req.body;
+        const result = await pool.query(
+            'INSERT INTO calendar_events (title, event_date, event_time, event_type) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, event_date, event_time, event_type]
+        );
+        const newEvent = result.rows[0];
+        res.status(201).json(newEvent);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+});
+
+// Update an existing event
+app.put('/api/calendar-events/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, event_date, event_time, event_type } = req.body;
+        const result = await pool.query(
+            'UPDATE calendar_events SET title = $1, event_date = $2, event_time = $3, event_type = $4 WHERE id = $5 RETURNING *',
+            [title, event_date, event_time, event_type, id]
+        );
+        const updatedEvent = result.rows[0];
+        res.json(updatedEvent);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Delete an event
+app.delete('/api/calendar-events/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query('DELETE FROM calendar_events WHERE id = $1', [id]);
+        res.json({ message: 'Event deleted successfully' });
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
   
 
 app.post('/users/new', async (req, res) => {
