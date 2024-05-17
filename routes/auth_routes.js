@@ -15,13 +15,20 @@ router.post('/login', async (req, res) => {
         const isValidPassword = await bcrypt.compare(password, user.rows[0].password);
         if (!isValidPassword) return res.status(401).json({ error: "Password is incorrect" });
 
-        // Generate JWT token
-        const accessToken = jwt.sign({ userId: user.rows[0].id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        // Generate JWT tokens with longer expiration times
+        const accessToken = jwt.sign({ userId: user.rows[0].id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' }); // Set expiration time to 30 minutes
+        const refreshToken = jwt.sign({ userId: user.rows[0].id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' }); // Set expiration time to 7 days
+        
+        // Send both tokens to the client
+        res.cookie('refresh_token', refreshToken, {
+            httpOnly: true
+        });
         res.json({ accessToken });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 
 router.get('/refresh_token', (req, res) => {
