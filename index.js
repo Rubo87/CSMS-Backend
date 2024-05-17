@@ -7,7 +7,6 @@ const usersRouter = require('./routes/users_routes');
 const cors = require('cors');
 const { authenticateToken } = require('./middleware/authorization.js');
 const bcrypt = require('bcrypt');
-const exceljs = require('exceljs');
 
 app.use(cors());
 
