@@ -38,12 +38,12 @@ app.get('/api/language-schools', async (req, res) => {
 app.post('/api/language-schools', async (req, res) => {
     try {
 
-        const { classValue, companyName, users, firstName, lastName, city, country } = req.body;
+        const { classValue, companyName, users, firstName, lastName, city, country, year } = req.body;
 
 
         const newEntry = await pool.query(
-            'INSERT INTO language_schools (class, companyname, users, firstname, lastname, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [classValue, companyName, users, firstName, lastName, city, country]
+            'INSERT INTO language_schools (class, companyname, users, firstname, lastname, city, country, year) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+            [classValue, companyName, users, firstName, lastName, city, country, year]
         );
 
 
