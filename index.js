@@ -168,43 +168,6 @@ app.post('/users/new', async (req, res) => {
     }
 });
 
-app.get('/api/export-excel', async (req, res) => {
-    try {
-      // Fetch data from the database table
-      const { rows } = await pool.query('SELECT * FROM language_schools');
-  
-      // Create a new workbook
-      const workbook = new exceljs.Workbook();
-      const worksheet = workbook.addWorksheet('Language Schools');
-  
-      // Define column headers
-      worksheet.columns = [
-        { header: 'ID', key: 'id', width: 10 },
-        { header: 'Users', key: 'users', width: 15 },
-        { header: 'Year', key: 'year', width: 10 },
-        { header: 'Country', key: 'country', width: 20 },
-        { header: 'First Name', key: 'firstname', width: 20 },
-        { header: 'Last Name', key: 'lastname', width: 20 },
-        { header: 'City', key: 'city', width: 20 },
-        { header: 'Class', key: 'class', width: 10 },
-        { header: 'Company Name', key: 'companyname', width: 25 },
-      ];
-  
-      // Add data rows
-      worksheet.addRows(rows);
-  
-      // Set response headers for Excel file download
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=language_schools.xlsx');
-  
-      // Write Excel file to response
-      await workbook.xlsx.write(res);
-      res.end();
-    } catch (error) {
-      console.error('Error exporting data to Excel:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
